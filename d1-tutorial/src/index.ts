@@ -1,19 +1,38 @@
-export interface Env {
-	// If you set another name in the Wrangler config file for the value for 'binding',
-	// replace "DB" with the variable name you defined.
-	prod_d1_tutorial: D1Database;
-}
+<script setup>
+const {
+  data: beverages,
+  pending,
+  error,
+} = await useFetch(
+  "https://d1-tutorial.herederocarlos9.workers.dev/api/beverages"
+);
+</script>
 
-export default {
-	async fetch(request, env): Promise<Response> {
-		const { pathname } = new URL(request.url);
+<template>
+  <div class="p-6">
+    <h1 class="text-2xl font-bold mb-4">Beverages</h1>
 
-		if (pathname === '/api/beverages') {
-			// If you did not use `DB` as your binding name, change it here
-			const { results } = await env.prod_d1_tutorial.prepare('SELECT * FROM Customers WHERE CompanyName = ?').bind('Bs Beverages').run();
-			return Response.json(results);
-		}
+    <div v-if="pending">Loading...</div>
+    <div v-else-if="error">Error loading data</div>
 
-		return new Response('Call /api/beverages to see everyone who works at Bs Beverages');
-	},
-} satisfies ExportedHandler<Env>;
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div
+        v-for="drink in beverages"
+        :key="drink.CustomerId"
+        class="card bg-base-100 shadow-xl p-4"
+      >
+        <h2 class="text-lg font-bold">
+          {{ drink.CompanyName }}
+        </h2>
+
+        <p class="text-sm opacity-70">
+          Contact: {{ drink.ContactName }}
+        </p>
+
+        <p class="text-xs mt-2">
+          ID: {{ drink.CustomerId }}
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
