@@ -5,8 +5,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   css: ["./app/assets/css/main.css"],
+  nitro: {
+    preset: "cloudflare-pages",
+  },
   modules: ["@nuxt/eslint", "@nuxt/icon", "@nuxt/image"],
   vite: {
-    plugins: [tailwindcss() as any],
+    plugins: [tailwindcss()],
   },
 });
